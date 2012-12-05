@@ -37,25 +37,25 @@ public class AsteroidsView extends AbstractView {
 	public boolean running = false;
 
 	Thread thread;
-	
+
 	BufferStrategy bs;
-	
+
 	int numStars;
 	StarryBackground stars;
-	
+
 	v2 m;
-	
+
 	Ship ship;
-	
+
 	public void start() {
-		
+
 		numStars = getWidth() * getHeight() / 1000; // how many stars
 		stars = new StarryBackground(numStars, getSize());
-		
+
 		if (running) {
 			return;
 		}
-		
+
 		running = true;
 		thread = new Thread(this);
 		thread.start();
@@ -65,30 +65,25 @@ public class AsteroidsView extends AbstractView {
 	 * @see java.applet.Applet#init() Sets up the output.
 	 */
 	public void init() {
-		
-		
-		start();		
-		
+
+		start();
+
 	}
 
 	/*
 	 * Changes the dimensions of the OUTPUT frame
 	 */
 	public void setSize(int width, int height) {
-		
-	}
 
+	}
 
 	/*
 	 * Gets the graphics being used
-	 
-	public Graphics getGraphics() {
-
-		return img.getGraphics();
-	}
+	 * 
+	 * public Graphics getGraphics() {
+	 * 
+	 * return img.getGraphics(); }
 	 */
-
-
 
 	/*
 	 * @see output.IOutput#getImage()
@@ -103,64 +98,74 @@ public class AsteroidsView extends AbstractView {
 			render();
 			try {
 				thread.sleep(16);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 		}
 	}
 
 	public void render() {
-		
+
 		createBufferStrategy(2);
 		bs = getBufferStrategy();
-		
+
 		setBackground(Color.BLACK);
 		Graphics g = bs.getDrawGraphics();
-		
+
 		// draw stars
 		g.setColor(Color.WHITE);
 		for (int i = 0; i < numStars; i++) {
 			g.drawLine(stars.getXAtIndex(i), stars.getYAtIndex(i),
 					stars.getXAtIndex(i), stars.getYAtIndex(i));
 		}
-		
-		// draw level counter
-		g.setColor(Color.GREEN);
-		g.drawString("Level " + m.level, 20, 20);
-		g.drawString("Score: " + m.score, 400, 20);
-		g.drawString("Ships: " + m.lives, 21, 435);
+
+		displayGameInfo(g); // draw level info
 
 		// draw player
 		ship = m.ship;
 		ship.draw(g);
-		
+
 		// draw player missiles
 		for (int i = 0; i < m.numMissles; i++)
 			m.missles[i].draw(g);
-		
+
 		// draw asteroids
 		for (int i = 0; i < m.numAsteroids; i++)
 			m.asteroids[i].draw(g);
-		
+
 		bs.show();
 		update(g);
 		bs.dispose();
 	}
-	
+
+	/*
+	 * Draws the game info on the canvas for the player to see
+	 * (ships left, level, score, etc)
+	 */
+	private void displayGameInfo(Graphics g) {
+		// draw level counter
+		g.setColor(Color.GREEN);
+		g.drawString("Level " + m.level, 20, 20);
+		g.drawString("Score: " + m.score, 400, 20);
+		g.drawString("Ships: " + m.lives, 20, 460);
+		g.drawString("Asteroids: " + m.numAsteroids, 400, 460);
+	}
+
 	/*
 	 * @see output.IOutput#update()
 	 */
 	@Override
 	public void update(Graphics g) {
-		
+
 		if (img == null) {
 			img = createImage(getWidth(), getHeight());
 			dbg = img.getGraphics();
 			return;
 		}
-				
+
 		paint(dbg);
-				
+
 		g.drawImage(img, 0, 0, null);
-		
+
 	}
 
 	@Override
@@ -171,7 +176,7 @@ public class AsteroidsView extends AbstractView {
 	@Override
 	public void paint(Graphics gfx) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

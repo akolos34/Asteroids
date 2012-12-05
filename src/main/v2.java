@@ -17,6 +17,7 @@ import output.AsteroidsView;
 import sprites.Asteroid;
 import sprites.Missle;
 import sprites.Ship;
+import util.FunBox;
 
 public class v2 extends JFrame implements IManager {
 	private static final long serialVersionUID = 1L;	
@@ -39,7 +40,7 @@ public class v2 extends JFrame implements IManager {
 	
 	public Missle[] missles;	// stores the array of missles
 	public int numMissles;		// stores the number of missles in the array
-	boolean firing;		// true if the ship is currently firing	
+	public boolean firing;		// true if the ship is currently firing	
 	
 	public Asteroid[] asteroids; // the array of asteroids
 	public int numAsteroids;	  // the number of asteroids currently in the array
@@ -60,7 +61,8 @@ public class v2 extends JFrame implements IManager {
 		
 		// Sizing stuff
 		setSizes();
-		initMenuBar();
+		
+		// initMenuBar(); TODO:
 		
 		setLocationRelativeTo(null); // places window at center of screen
 		
@@ -98,9 +100,8 @@ public class v2 extends JFrame implements IManager {
 	 */
 	public void init() {
 		framePeriod = 25;
-		initMenuBar();
 		
-		missles = new Missle[41];	// allocate the space for the array
+		missles = new Missle[50];	// allocate the space for the array
 		
 		numAsteroids = 0;
 		level = 0;	// will be incremented to 1 when first level is set up
@@ -126,7 +127,7 @@ public class v2 extends JFrame implements IManager {
 		
 		// create a new, inactive ship centered on the screen
 		// values can be adjusted
-		ship = new Ship(250, 250, 0, .35, .98, .1, 12); // instantiate ship
+		ship = new Ship(250, 250, 0, .35, .98, .1, 10); // instantiate ship
 		
 		numMissles = 0;	// no missiles in the field to start with
 		paused = false;
@@ -155,7 +156,7 @@ public class v2 extends JFrame implements IManager {
 		
 		ship.move(size.width, size.height);
 		
-		for(int i = 0; i < numMissles ;i++){ 
+		for(int i = 0; i < numMissles ;i++) { 
 			missles[i].move(size.width,size.height); 
 			//removes shot if it has gone for too long
 			//without hitting anything
@@ -169,14 +170,7 @@ public class v2 extends JFrame implements IManager {
 			} 
 			
 		//move asteroids and check for collisions
-			updateAsteroids(); 
-			
-			if(firing && ship.canShoot()){ 
-				//add a shot on to the array
-				missles[numMissles]=ship.fire(); 
-				numMissles++; 
-			} 
-		
+			updateAsteroids();	
 		
 		render(); // get our view object updated
 	}
@@ -186,7 +180,7 @@ public class v2 extends JFrame implements IManager {
 	 */
 	@Override
 	public void run() {
-		System.out.println("running" + running);
+		System.out.println("running : " + running);
 		while (running) {
 			// mark start time
 			startTime = System.currentTimeMillis();
@@ -220,7 +214,7 @@ public class v2 extends JFrame implements IManager {
 		numMissles--;
 		for(int i = index; i < numMissles; i++)
 			missles[i] = missles[i+1];
-		asteroids[numMissles] = null;
+		missles[numMissles] = null;
 	}
 	
 	private void deleteAsteroid(int index) {
@@ -245,6 +239,7 @@ public class v2 extends JFrame implements IManager {
 		}
 		
 		for (int i = 0; i < numAsteroids; i++) {
+			
 			// move each asteroid
 			asteroids[i].move(size.width, size.height);
 			// check for collisions with the ship, restart the

@@ -146,9 +146,9 @@ public class Ship {
 	public Missle fire() {
 		// set delay till next missle can be fired
 		shotDelayLeft = shotDelay;
-		// a time of 40 makes the shot travel about the width of the
-		// screen before disappearing
-		return new Missle(x, y, angle, dx, dy, 40);
+		
+		// TODO: time (40) can be adjusted
+		return new Missle(xPts[2], yPts[2], angle, dx, dy, 40);
 	}
 
 	public void setTurningLeft(boolean turningLeft) {

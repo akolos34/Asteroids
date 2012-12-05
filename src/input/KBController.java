@@ -22,6 +22,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.FunBox;
+
 import main.v2;
 
 public class KBController implements IController {
@@ -32,11 +34,10 @@ public class KBController implements IController {
 
 	GameAction forwardThruster = new GameAction("forwardThruster");
 	GameAction backwardThruster = new GameAction("backwardThruster");
-	GameAction fire = new GameAction("fire");
-	GameAction warp = new GameAction("warp");
 	GameAction rotateLeft = new GameAction("rotateLeft");
 	GameAction rotateRight = new GameAction("rotateRight");
-
+	GameAction fire = new GameAction("fire");
+	
 	public GameAction pause = new GameAction("pause",
 			GameAction.DETECT_INITIAL_PRESS_ONLY);
 	public GameAction start = new GameAction("start",
@@ -64,7 +65,6 @@ public class KBController implements IController {
 		mapToKey(forwardThruster, KeyEvent.VK_UP);
 		mapToKey(backwardThruster, KeyEvent.VK_DOWN);
 		mapToKey(fire, KeyEvent.VK_SPACE);
-		mapToKey(warp, KeyEvent.VK_W);
 		mapToKey(rotateLeft, KeyEvent.VK_LEFT);
 		mapToKey(rotateRight, KeyEvent.VK_RIGHT);
 		mapToKey(pause, KeyEvent.VK_P);
@@ -240,10 +240,13 @@ public class KBController implements IController {
 				m.ship.setActive(true);
 			else {
 				m.paused = !m.paused;
-				if (m.paused)
+				if (m.paused) {
+					System.out.println("Paused");
 					m.ship.setActive(false);
-				else
+				} else {
+					System.out.println("Playing");
 					m.ship.setActive(true);
+				}
 			}
 		}
 
@@ -260,6 +263,14 @@ public class KBController implements IController {
 			m.ship.setTurningRight(true);
 		else
 			m.ship.setTurningRight(false);
+		
+		if (fire.isPressed() && m.ship.isActive()) {
+			if (m.ship.canShoot()) {
+				FunBox.p("Missle fired");
+				m.missles[m.numMissles] = m.ship.fire();
+				m.numMissles++;
+			}
+		}
 
 		// not pressed
 	}

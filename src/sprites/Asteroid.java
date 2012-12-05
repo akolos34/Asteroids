@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
+import util.FunBox;
+
 public class Asteroid {
 
 	double x, y, dx, dy;
@@ -81,8 +83,9 @@ public class Asteroid {
 		 */
 		for (int i = 0; i < ship.borderPolygon.npoints; i++) {
 			if (this.borderPolygon.contains(ship.borderPolygon.xpoints[i],
-					ship.borderPolygon.ypoints[i]))
-				return true;
+					ship.borderPolygon.ypoints[i])){
+				FunBox.p("Hit the ship!");
+				return true;}
 		}
 
 		/*
@@ -91,8 +94,9 @@ public class Asteroid {
 		 */
 		for (int i = 0; i < this.borderPolygon.npoints; i++)
 			if (ship.borderPolygon.contains(this.borderPolygon.xpoints[i],
-					this.borderPolygon.ypoints[i]))
-				return true;
+					this.borderPolygon.ypoints[i])){
+				FunBox.p("Hit the ship!");
+				return true;}
 		
 		return false;
 	}
@@ -103,8 +107,10 @@ public class Asteroid {
 		 * check to see if this missle had entered this asteroid
 		 */
 		for (int i = 0; i < borderPolygon.npoints; i++) {
-			if (this.borderPolygon.contains(missle.x, missle.y))
+			if (this.borderPolygon.contains(missle.x, missle.y)) {
+				FunBox.p("Hit a missle!");
 				return true;
+			}
 		}
 		
 		return false;

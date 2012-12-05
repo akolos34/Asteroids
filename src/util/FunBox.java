@@ -51,4 +51,18 @@ public class FunBox {
 		Color color = new Color(r, g, b);
 		return color;
 	}
+
+	public static Color randomColor_Blues() {
+		
+		float r = 0;
+		float g = rand.nextFloat();
+		float b = 1;
+		
+		Color color = new Color(r, g, b);
+		return color;
+	}
+	
+	public static void p (String str) {
+		System.out.println(str);
+	}
 }

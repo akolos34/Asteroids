@@ -3,10 +3,11 @@ package sprites;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import util.FunBox;
+
 public class Missle {
 
-	double missleSpeed = 12; // the speed at which the missles move (pix per
-								// frame)
+	final double missleSpeed = 15; // the speed at which the missles move (pix per frame)
 
 	double x, y, dx, dy; // variables for movement
 
@@ -46,9 +47,9 @@ public class Missle {
 	}
 	
 	public void draw(Graphics g) {
-		g.setColor(Color.YELLOW); // set shot color
+		g.setColor(FunBox.randomColor_Blues()); // set shot color
 		
-		g.drawLine((int) x - 1, (int) y - 1, (int) x + 1, (int) y + 1);
+		g.fillRect( (int) x + 2, (int) y - 2, 4, 4);
 		
 	}
 	
