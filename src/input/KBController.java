@@ -22,7 +22,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.IManager;
 import main.v2;
 
 public class KBController implements IController {
@@ -44,13 +43,24 @@ public class KBController implements IController {
 			GameAction.DETECT_INITIAL_PRESS_ONLY);
 	public GameAction exit = new GameAction("exit",
 			GameAction.DETECT_INITIAL_PRESS_ONLY);
-	
+
+	private Component ownerComponent;
+
 	/*
 	 * Sets default keybinds
 	 */
 	@Override
 	public void init() {
 
+		// register key listener
+		ownerComponent.addKeyListener(this);
+		ownerComponent.setFocusTraversalKeysEnabled(false);
+		
+		mapDefaultKeys(); // set up default keybinds
+	}
+
+	private void mapDefaultKeys() {
+		
 		mapToKey(forwardThruster, KeyEvent.VK_UP);
 		mapToKey(backwardThruster, KeyEvent.VK_DOWN);
 		mapToKey(fire, KeyEvent.VK_SPACE);
@@ -68,10 +78,9 @@ public class KBController implements IController {
 	 */
 
 	public KBController(Component comp) {
-		//register key listener
-		comp.addKeyListener(this);
-		comp.setFocusTraversalKeysEnabled(false);
-		
+
+		ownerComponent = comp;
+
 		init(); // set up default keybinds
 	}
 
@@ -82,7 +91,7 @@ public class KBController implements IController {
 	/*
 	 * Since the GameAction class already has a name and associated key code we
 	 * don't need to make parallel arrays for storing the key binds. Instead, we
-	 * just have one aray, and there is an index for each key-code. When we want
+	 * just have one array, and there is an index for each key-code. When we want
 	 * to map a key, we assign the value of the GameAction at the index that is
 	 * the key-code. By doing this, any given number of keys can be mapped to
 	 * perform the same behavior.
@@ -160,13 +169,12 @@ public class KBController implements IController {
 			return null;
 		}
 	}
-	
+
 	// returns the GameAction bound to that key
 	public GameAction getKeyAction(int keyCode) {
 		if (keyCode < keyActions.length) {
 			return keyActions[keyCode];
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -180,16 +188,17 @@ public class KBController implements IController {
 		if (gameAction != null) {
 			keyActions[e.getKeyCode()].press();
 		}
-		
+
 		int keyCode = e.getKeyCode();
 		System.out.println("Pressed: " + e.getKeyText(keyCode));
-		
+
 		// make sure the key is not processed for anything else
 		e.consume();
 	}
 
 	/*
 	 * Signal the GameAction to be released
+	 * 
 	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
 	 */
 	@Override
@@ -237,22 +246,21 @@ public class KBController implements IController {
 					m.ship.setActive(true);
 			}
 		}
-		
-		if (forwardThruster.isPressed()){
+
+		if (forwardThruster.isPressed()) {
 			m.ship.setAccelerating(true);
-			System.out.println("hi");}
-		else 
+		} else
 			m.ship.setAccelerating(false);
 		if (rotateLeft.isPressed())
 			m.ship.setTurningLeft(true);
 		else
 			m.ship.setTurningLeft(false);
-			
+
 		if (rotateRight.isPressed())
 			m.ship.setTurningRight(true);
 		else
 			m.ship.setTurningRight(false);
-		
+
 		// not pressed
 	}
 }

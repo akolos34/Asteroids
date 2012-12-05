@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import main.v2;
 import sprites.*;
 
-public class AsteroidsView extends Canvas implements IOutput, Runnable {
+public class AsteroidsView extends AbstractView {
 
 	private static final long serialVersionUID = 1L; // eclipse wants me to
 
@@ -126,12 +126,13 @@ public class AsteroidsView extends Canvas implements IOutput, Runnable {
 		g.setColor(Color.GREEN);
 		g.drawString("Level " + m.level, 20, 20);
 		g.drawString("Score: " + m.score, 400, 20);
+		g.drawString("Ships: " + m.lives, 21, 435);
 
 		// draw player
 		ship = m.ship;
 		ship.draw(g);
 		
-		// draw player missles
+		// draw player missiles
 		for (int i = 0; i < m.numMissles; i++)
 			m.missles[i].draw(g);
 		
@@ -165,6 +166,17 @@ public class AsteroidsView extends Canvas implements IOutput, Runnable {
 	@Override
 	public void update(v2 m) {
 		this.m = m;
+	}
+
+	@Override
+	public void paint(Graphics gfx) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Graphics getGraphics() {
+		return dbg;
 	}
 
 }

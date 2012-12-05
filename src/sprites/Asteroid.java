@@ -6,8 +6,12 @@ import java.awt.Polygon;
 
 public class Asteroid {
 
-	double x, y, dx, dy, radius;
-	int hitPoints, numSplit;
+	double x, y, dx, dy;
+	double radius;	// used to know the center of the Asteroid (wrapping)
+	
+	int hitPoints;	// number of missles it takes to destroy an Asteroid
+	int numSplit;	// number of Asteroids this Asteroid will split into
+	
 	int minAstSides, maxAstSides, minAstSize, maxAstSize;
 
 	public Polygon borderPolygon;
@@ -17,7 +21,7 @@ public class Asteroid {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
-		this.hitPoints = hitPoints; // number of missles left to destroy it
+		this.hitPoints = hitPoints; // number of missiles needed to destroy this
 		this.numSplit = numSplit; // number of smaller asteroids it breaks up
 									// into when shot
 
@@ -70,13 +74,21 @@ public class Asteroid {
 	}
 
 	public boolean shipCollision(Ship ship) {
-
+		
+		/*
+		 * Check to see if this Asteroid's Polygon contains a point from the
+		 * Ship's Polygon.
+		 */
 		for (int i = 0; i < ship.borderPolygon.npoints; i++) {
 			if (this.borderPolygon.contains(ship.borderPolygon.xpoints[i],
 					ship.borderPolygon.ypoints[i]))
 				return true;
 		}
 
+		/*
+		 * Now, check to see if the Ship's polygon contains a point from this
+		 * Asteroid's polygon.
+		 */
 		for (int i = 0; i < this.borderPolygon.npoints; i++)
 			if (ship.borderPolygon.contains(this.borderPolygon.xpoints[i],
 					this.borderPolygon.ypoints[i]))
@@ -87,6 +99,9 @@ public class Asteroid {
 
 	public boolean missleCollision(Missle missle) {
 		
+		/*
+		 * check to see if this missle had entered this asteroid
+		 */
 		for (int i = 0; i < borderPolygon.npoints; i++) {
 			if (this.borderPolygon.contains(missle.x, missle.y))
 				return true;
@@ -109,6 +124,7 @@ public class Asteroid {
 	}
 
 	public void draw(Graphics g) {
+		
 		g.setColor(Color.GRAY); // set color for the asteroid
 		
 		g.fillPolygon(borderPolygon);
@@ -116,10 +132,12 @@ public class Asteroid {
 	}
 
 	public int getHitPoints() {
+		
 		return hitPoints;
 	}
 
 	public int getNumSplit() {
+		
 		return numSplit;
 	}
 

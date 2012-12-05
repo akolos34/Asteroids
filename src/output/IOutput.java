@@ -12,12 +12,13 @@
  */
 package output;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 
 import main.v2;
 
-public interface IOutput {
+public interface IOutput extends Runnable {
 	
 	
 	/*

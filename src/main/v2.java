@@ -1,5 +1,6 @@
 package main;
 
+import input.IController;
 import input.KBController;
 
 import java.awt.Color;
@@ -11,15 +12,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import output.AbstractView;
 import output.AsteroidsView;
 import sprites.Asteroid;
 import sprites.Missle;
 import sprites.Ship;
 
 public class v2 extends JFrame implements IManager {
-	private static final long serialVersionUID = 1L;
-	
-	
+	private static final long serialVersionUID = 1L;	
 	
 	Thread thread;
 	
@@ -30,6 +30,7 @@ public class v2 extends JFrame implements IManager {
 	public int score;
 	public int highScore;
 	public int extraShipScore; // one-up score
+	public int lives = 1; // YOLO
 	
 	public boolean paused;
 	public boolean running = false;
@@ -47,22 +48,18 @@ public class v2 extends JFrame implements IManager {
 	
 	public int level = 0;	// current level number
 	
-	AsteroidsView view;
-	KBController controller;
+	AbstractView view;
+	IController controller;
 	
 	// Constructors:
 	
 	v2() {
 		
+		
 		super("Asteroids"); // name the window
 		
 		// Sizing stuff
-		size = new Dimension(500, 500);
-		setPreferredSize(size);
-		setMaximumSize(size);
-		setMinimumSize(size);
-		setResizable(false);
-		
+		setSizes();
 		initMenuBar();
 		
 		setLocationRelativeTo(null); // places window at center of screen
@@ -76,49 +73,47 @@ public class v2 extends JFrame implements IManager {
 				
 		setVisible(true); 		// make this window visible visible
 		view.setVisible(true);	// make the View inside the window visible
-		
-		
+	
 		// output components are loaded, time to load input
 		controller = new KBController(this);
 			
 	}
 	
-
 	/*
 	 * starts the game
 	 */
 	public void start() {
 		init();
+		
 		if (thread == null) {
 			thread = new Thread(this);
 			thread.start();
 		}
 		
-		view.update(this);
-		
-
 	}
 		
-	
 	/*
 	 * First method called upon starting. Initializes
 	 * all necessary variables and objects.
 	 */
 	public void init() {
-		framePeriod = 30;
+		framePeriod = 25;
 		initMenuBar();
 		
 		missles = new Missle[41];	// allocate the space for the array
 		
 		numAsteroids = 0;
-		level = 0;	// will be imcremented to 1 when first level is set up
+		level = 0;	// will be incremented to 1 when first level is set up
 		astRadius = 60;	// values used to create the asteroids
 		minAstVel = .5;
 		maxAstVel = 5;
 		astNumHits = 3;
 		astNumSplit = 2;
-		running = true;				
+		running = true;	
+		
 		setUpNextLevel();
+		
+		view.update(this);
 		view.start();			// start the view object
 		
 		
@@ -133,12 +128,12 @@ public class v2 extends JFrame implements IManager {
 		// values can be adjusted
 		ship = new Ship(250, 250, 0, .35, .98, .1, 12); // instantiate ship
 		
-		numMissles = 0;	// no missles in the field to start with
+		numMissles = 0;	// no missiles in the field to start with
 		paused = false;
 		firing = false;	// the ship is not firing
 		//create an array large enough to hold the largest number of
 		// asteroids possible on this level (plus one because the split
-		// asteroids are created first, then the orginal one is deleted).
+		// asteroids are created first, then the original one is deleted).
 		// The level number is equal to the number of asteroids at it's start.
 		asteroids = new Asteroid[level * (int) Math.pow(astNumSplit, astNumHits - 1) + 1];
 		
@@ -243,6 +238,12 @@ public class v2 extends JFrame implements IManager {
 	}
 	
 	private void updateAsteroids() {
+		
+		if (numAsteroids == 0) {
+			setUpNextLevel();
+			return;
+		}
+		
 		for (int i = 0; i < numAsteroids; i++) {
 			// move each asteroid
 			asteroids[i].move(size.width, size.height);
@@ -250,7 +251,9 @@ public class v2 extends JFrame implements IManager {
 			// level if the ship gets hit
 			if (asteroids[i].shipCollision(ship)) {
 				level--;	// restart this level
+				lives--;   // decrement lives
 				numAsteroids = 0;
+				setUpNextLevel();
 				return;
 			}
 			// check for collisions with any of the missles
@@ -270,7 +273,7 @@ public class v2 extends JFrame implements IManager {
 					i--;	// don't skip asteroid shifted back into the deleted asteroid's pos.
 				}
 			}
-		}
+		} 
 	}
 	
 	JMenuBar menuBar;
@@ -310,4 +313,15 @@ public class v2 extends JFrame implements IManager {
 		
 	}
 	
+	/*
+	 * Sizes JFrame sizes and the size of the game field
+	 */
+	private void setSizes() {
+		
+		size = new Dimension(500, 500);
+		setPreferredSize(size);
+		setMaximumSize(size);
+		setMinimumSize(size);
+		setResizable(false);
+	}
 }
