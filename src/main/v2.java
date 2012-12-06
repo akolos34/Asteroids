@@ -106,8 +106,8 @@ public class v2 extends JFrame implements IManager {
 		numAsteroids = 0;
 		level = 0;	// will be incremented to 1 when first level is set up
 		astRadius = 60;	// values used to create the asteroids
-		minAstVel = .5;
-		maxAstVel = 5;
+		minAstVel = 10;
+		maxAstVel = 20;
 		astNumHits = 3;
 		astNumSplit = 2;
 		running = true;	

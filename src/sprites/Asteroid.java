@@ -14,7 +14,7 @@ public class Asteroid {
 	int hitPoints;	// number of missles it takes to destroy an Asteroid
 	int numSplit;	// number of Asteroids this Asteroid will split into
 	
-	int minAstSides, maxAstSides, minAstSize, maxAstSize;
+	int minAstSides = 6, maxAstSides = 9, minAstSize = 10, maxAstSize = 20;
 
 	public Polygon borderPolygon;
 
@@ -32,9 +32,11 @@ public class Asteroid {
 		double vel = minVelocity + Math.random() * (maxVelocity - minVelocity), dir = 2
 				* Math.PI * Math.random(); // random direction
 
+		
 		dx = vel * Math.cos(dir);
 		dy = vel * Math.sin(dir);
-
+		
+		
 		createAsteroidPolygon();
 	}
 
@@ -60,7 +62,12 @@ public class Asteroid {
 
 		x += dx; // move the asteroid
 		y += dy;
-
+		
+		for (int i = 0; i < borderPolygon.npoints; i++) {
+			borderPolygon.xpoints[i] += x;
+			borderPolygon.ypoints[i] += y;
+		}
+		
 		// wrap around code allowing the asteroid to go off the screen
 		// to a distance equal to its radius before entering on the other
 		// side. Otherwise, it would go halfway off the field, then disappear
