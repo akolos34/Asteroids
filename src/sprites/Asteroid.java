@@ -9,17 +9,19 @@ import util.FunBox;
 public class Asteroid {
 
 	double x, y, dx, dy;
-	double radius;	// used to know the center of the Asteroid (wrapping)
-	
-	int hitPoints;	// number of missles it takes to destroy an Asteroid
-	int numSplit;	// number of Asteroids this Asteroid will split into
-	
-	int minAstSides = 6, maxAstSides = 9, minAstSize = 10, maxAstSize = 20;
+	double radius; // used to know the center of the Asteroid (wrapping)
 
+	int hitPoints; // number of missles it takes to destroy an Asteroid
+	int numSplit; // number of Asteroids this Asteroid will split into
+
+	int minAstSides = 6, maxAstSides = 9, minAstSize = 10, maxAstSize = 25;
+
+	private Polygon originalPolygon;
 	public Polygon borderPolygon;
 
 	public Asteroid(double x, double y, double radius, double minVelocity,
-			double maxVelocity, int hitPoints, int numSplit) {
+			double maxVelocity, int hitPoints, int numSplit, int minAstSize,
+			int maxAstSize) {
 		this.x = x;
 		this.y = y;
 		this.radius = radius;
@@ -29,14 +31,12 @@ public class Asteroid {
 
 		// calculates a random direction and a random velocity between
 		// minVelocity and maxVelocity
-		double vel = minVelocity + Math.random() * (maxVelocity - minVelocity), dir = 2
-				* Math.PI * Math.random(); // random direction
+		double vel = minVelocity + Math.random() * (maxVelocity - minVelocity);
+		double dir = 2 * Math.PI * Math.random(); // random direction
 
-		
 		dx = vel * Math.cos(dir);
 		dy = vel * Math.sin(dir);
-		
-		
+
 		createAsteroidPolygon();
 	}
 
@@ -47,6 +47,7 @@ public class Asteroid {
 		int x, y;
 
 		borderPolygon = new Polygon();
+		originalPolygon = new Polygon();
 		side = minAstSides
 				+ (int) (Math.random() * (maxAstSides - minAstSides));
 		for (int j = 0; j < side; j++) {
@@ -55,6 +56,7 @@ public class Asteroid {
 			x = (int) -Math.round(r * Math.sin(theta));
 			y = (int) Math.round(r * Math.cos(theta));
 			borderPolygon.addPoint(x, y);
+			originalPolygon.addPoint(x, y);
 		}
 	}
 
@@ -62,12 +64,12 @@ public class Asteroid {
 
 		x += dx; // move the asteroid
 		y += dy;
-		
+
 		for (int i = 0; i < borderPolygon.npoints; i++) {
-			borderPolygon.xpoints[i] += x;
-			borderPolygon.ypoints[i] += y;
+			borderPolygon.xpoints[i] = (int) (originalPolygon.xpoints[i] + x);
+			borderPolygon.ypoints[i] = (int) (originalPolygon.ypoints[i] + y);
 		}
-		
+
 		// wrap around code allowing the asteroid to go off the screen
 		// to a distance equal to its radius before entering on the other
 		// side. Otherwise, it would go halfway off the field, then disappear
@@ -83,16 +85,17 @@ public class Asteroid {
 	}
 
 	public boolean shipCollision(Ship ship) {
-		
+
 		/*
 		 * Check to see if this Asteroid's Polygon contains a point from the
 		 * Ship's Polygon.
 		 */
 		for (int i = 0; i < ship.borderPolygon.npoints; i++) {
 			if (this.borderPolygon.contains(ship.borderPolygon.xpoints[i],
-					ship.borderPolygon.ypoints[i])){
+					ship.borderPolygon.ypoints[i])) {
 				FunBox.p("Hit the ship!");
-				return true;}
+				return true;
+			}
 		}
 
 		/*
@@ -101,26 +104,26 @@ public class Asteroid {
 		 */
 		for (int i = 0; i < this.borderPolygon.npoints; i++)
 			if (ship.borderPolygon.contains(this.borderPolygon.xpoints[i],
-					this.borderPolygon.ypoints[i])){
+					this.borderPolygon.ypoints[i])) {
 				FunBox.p("Hit the ship!");
-				return true;}
-		
+				return true;
+			}
+
 		return false;
 	}
 
 	public boolean missleCollision(Missle missle) {
-		
+
 		/*
 		 * check to see if this missle had entered this asteroid
 		 */
-		for (int i = 0; i < borderPolygon.npoints; i++) {
-			if (this.borderPolygon.contains(missle.x, missle.y)) {
-				FunBox.p("Hit a missle!");
-				return true;
-			}
+
+		if (this.borderPolygon.contains(missle.x, missle.y)) {
+			FunBox.p("Hit a missle!");
+			return true;
+		} else {
+			return false;
 		}
-		
-		return false;
 	}
 
 	// may be redone
@@ -133,24 +136,24 @@ public class Asteroid {
 		// Each smaller asteroid has one less hit left before being completely
 		// destroyed.
 		return new Asteroid(x, y, radius / Math.sqrt(numSplit), minVelocity,
-				maxVelocity, hitPoints - 1, numSplit);
+				maxVelocity, hitPoints - 1, numSplit, minAstSize / numSplit, maxAstSize / numSplit);
 	}
 
 	public void draw(Graphics g) {
-		
+
 		g.setColor(Color.GRAY); // set color for the asteroid
-		
+
 		g.fillPolygon(borderPolygon);
-		// finishing drawing later
+	
 	}
 
 	public int getHitPoints() {
-		
+
 		return hitPoints;
 	}
 
 	public int getNumSplit() {
-		
+
 		return numSplit;
 	}
 

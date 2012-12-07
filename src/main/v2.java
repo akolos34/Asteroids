@@ -45,7 +45,7 @@ public class v2 extends JFrame implements IManager {
 	public Asteroid[] asteroids; // the array of asteroids
 	public int numAsteroids;	  // the number of asteroids currently in the array
 	double astRadius, minAstVel, maxAstVel;	// values used to create asteroids
-	int astNumHits, astNumSplit;
+	int astNumHits, astNumSplit, minAstSize, maxAstSize;
 	
 	public int level = 0;	// current level number
 	
@@ -106,8 +106,10 @@ public class v2 extends JFrame implements IManager {
 		numAsteroids = 0;
 		level = 0;	// will be incremented to 1 when first level is set up
 		astRadius = 60;	// values used to create the asteroids
-		minAstVel = 10;
-		maxAstVel = 20;
+		minAstVel = 2;
+		maxAstVel = 4;
+		minAstSize = 15;
+		maxAstSize = 45;
 		astNumHits = 3;
 		astNumSplit = 2;
 		running = true;	
@@ -143,7 +145,7 @@ public class v2 extends JFrame implements IManager {
 		for (int i = 0; i < numAsteroids; i++)
 			asteroids[i] = new Asteroid(Math.random()*size.width,
 					Math.random()*size.height, astRadius, minAstVel,
-					maxAstVel, astNumHits, astNumSplit);
+					maxAstVel, astNumHits, astNumSplit, minAstSize, maxAstSize);
 	}
 	
 	/*
@@ -242,6 +244,7 @@ public class v2 extends JFrame implements IManager {
 			
 			// move each asteroid
 			asteroids[i].move(size.width, size.height);
+			
 			// check for collisions with the ship, restart the
 			// level if the ship gets hit
 			if (asteroids[i].shipCollision(ship)) {
@@ -251,16 +254,19 @@ public class v2 extends JFrame implements IManager {
 				setUpNextLevel();
 				return;
 			}
+			
 			// check for collisions with any of the missles
 			for (int j = 0; j < numMissles; j++) {
 				if (asteroids[i].missleCollision(missles[j])) {
 					// if the shot hit an asteroid, delete that shot
 					deleteMissle(j);
+					
 					// split the asteroid up if needed
 					if(asteroids[i].getHitPoints() > 1) {
 						for (int k = 0; k < asteroids[i].getNumSplit(); k++)
 							addAsteroid(asteroids[i].createSplitAsteroid(minAstVel, maxAstVel));
 					}
+					
 					// delete the original asteroid
 					deleteAsteroid(i);
 					j = numMissles;	// break out of the inner loop: it has already been
